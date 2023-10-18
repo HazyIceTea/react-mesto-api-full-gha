@@ -7,6 +7,7 @@ function getResponseData(res) {
     return res.json();
 }
 
+
 export const register = (data) =>{
     return fetch(`${baseUrl}signup`,{
         method: 'POST',
