@@ -5,6 +5,7 @@ const User = require('../models/user');
 const ErrorBadRequest = require('../errors/ErrorBadRequest');
 const ErrorNotFound = require('../errors/ErrorNotFound');
 const ErrorConflict = require('../errors/ErrorConflict');
+
 const { JWT_SECRET } = process.env;
 
 module.exports.createUser = (req, res, next) => {
