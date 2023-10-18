@@ -5,12 +5,12 @@
   
 Пожалуйста, прикрепите в это описание ссылку на сайт, размещенный на Яндекс.Облаке.
 
-Адрес репозитория: https://github.com/...
+Адрес репозитория: https://github.com/HazyIceTea/react-mesto-api-full-gha
 
 ## Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 84.252.140.112
 
-Frontend https://...
+Frontend https://iceteamesto.nomoredomainsrocks.ru
 
-Backend https://...
+Backend https://api.iceteamesto.nomoredomainsrocks.ru
