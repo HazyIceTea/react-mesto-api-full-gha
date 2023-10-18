@@ -100,6 +100,6 @@ class Api {
     }
 }
 
-const api = new Api( 'api.iceteamesto.nomoredomainsrocks.ru');
+const api = new Api( 'https://api.iceteamesto.nomoredomainsrocks.ru');
 
 export default api;
