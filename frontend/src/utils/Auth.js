@@ -1,4 +1,4 @@
-const baseUrl = "api.iceteamesto.nomoredomainsrocks.ru/";
+const baseUrl = "https://api.iceteamesto.nomoredomainsrocks.ru/";
 
 function getResponseData(res) {
     if (!res.ok) {
