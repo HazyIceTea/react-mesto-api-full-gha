@@ -1,16 +1,12 @@
 require('dotenv').config();
 
-const http2 = require('http2');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('express');
-const { celebrate, Joi, errors } = require('celebrate');
+const { errors } = require('celebrate');
 const cors = require('cors');
-const ErrorNotFound = require('./errors/ErrorNotFound');
-const { createUser, login } = require('./controllers/users');
-const auth = require('./middlewares/auth');
-const urlRegex = require('./utils/constants');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const DefaultErrorHandler = require('./middlewares/DefaultErrorHandler')
 
 const { PORT = 3000 } = process.env;
 
@@ -31,45 +27,12 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(urlRegex),
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), createUser);
-
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), login);
-
-app.use(auth);
-
-app.use('/cards', require('./routes/cards'));
-app.use('/users', require('./routes/users'));
-
-app.use('*', (req, res, next) => next(new ErrorNotFound('Страница не найдена')));
+app.use('/', require('./routes/index'))
 
 app.use(errorLogger);
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
-  const { statusCode = http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR, message } = err;
-
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === http2.constants.HTTP_STATUS_INTERNAL_SERVER_ERROR
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-  next();
-});
+app.use(DefaultErrorHandler)
 
 app.listen(PORT);

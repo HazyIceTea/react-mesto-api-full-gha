@@ -5,6 +5,7 @@ const User = require('../models/user');
 const ErrorBadRequest = require('../errors/ErrorBadRequest');
 const ErrorNotFound = require('../errors/ErrorNotFound');
 const ErrorConflict = require('../errors/ErrorConflict');
+const mongoose = require("mongoose");
 
 const { JWT_SECRET } = process.env;
 
@@ -27,7 +28,7 @@ module.exports.createUser = (req, res, next) => {
         .catch((err) => {
           if (err.code === 11000) {
             next(new ErrorConflict('Пользователь с таким Email уже существует'));
-          } else if (err.name === 'ValidationError') {
+          } else if (err instanceof mongoose.Error.ValidationError) {
             next(new ErrorBadRequest(err));
           } else next(err);
         });
@@ -45,7 +46,7 @@ module.exports.getSingleUser = (req, res, next) => {
     .then((user) => (user
       ? res.send(user)
       : next(new ErrorNotFound('Пользователь не найден'))))
-    .catch((err) => (err.name === 'CastError'
+    .catch((err) => (err instanceof mongoose.Error.CastError
       ? next(new ErrorBadRequest('Некорректный Id'))
       : next(err)));
 };
@@ -65,7 +66,7 @@ module.exports.updateUserInfo = (req, res, next) => {
       ? res.send(user)
       : next(new ErrorNotFound('Пользователь не найден'))))
     .catch((err) => {
-      if (err.name === 'ValidationError') next(new ErrorBadRequest(err));
+      if (err instanceof mongoose.Error.ValidationError) next(new ErrorBadRequest(err));
       else next(err);
     });
 };
@@ -79,7 +80,7 @@ module.exports.updateAvatar = (req, res, next) => {
       ? res.send(user)
       : next(new ErrorNotFound('Пользователь не найден'))))
     .catch((err) => {
-      if (err.name === 'ValidationError') next(new ErrorBadRequest(err));
+      if (err instanceof mongoose.Error.ValidationError) next(new ErrorBadRequest(err));
       else next(err);
     });
 };

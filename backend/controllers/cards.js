@@ -3,6 +3,7 @@ const Card = require('../models/card');
 const ErrorBadRequest = require('../errors/ErrorBadRequest');
 const ErrorNotFound = require('../errors/ErrorNotFound');
 const ErrorForbidden = require('../errors/ErrorForbidden');
+const mongoose = require("mongoose");
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -15,7 +16,7 @@ module.exports.postCard = (req, res, next) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(http2.constants.HTTP_STATUS_CREATED).send(card))
     .catch((err) => {
-      if (err.name === 'ValidationError') next(new ErrorBadRequest(err));
+      if (err instanceof mongoose.Error.ValidationError) next(new ErrorBadRequest(err));
       else next(err);
     });
 };
@@ -31,12 +32,12 @@ module.exports.deleteCard = (req, res, next) => {
           .then(() => (card
             ? res.send({ message: 'Карточка успешно удалена' })
             : next(new ErrorNotFound('Карточка не найдена'))))
-          .catch((err) => (err.name === 'CastError'
-            ? next(new ErrorBadRequest('Некорректный Id'))
-            : next(err)));
+          .catch(err => next(err));
       }
     })
-    .catch((err) => next(err));
+    .catch((err) => (err instanceof mongoose.Error.CastError
+      ? next(new ErrorBadRequest('Некорректный Id'))
+      : next(err)));
 };
 
 module.exports.likeCard = (req, res, next) => {
@@ -48,7 +49,7 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => (card
       ? res.send(card)
       : next(new ErrorNotFound('Карточка не найдена'))))
-    .catch((err) => (err.name === 'CastError'
+    .catch((err) => (err instanceof mongoose.Error.CastError
       ? next(new ErrorBadRequest('Некорректный Id'))
       : next(err)));
 };
@@ -62,7 +63,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .then((card) => (card
       ? res.send(card)
       : next(new ErrorNotFound('Карточка не найдена'))))
-    .catch((err) => (err.name === 'CastError'
+    .catch((err) => (err instanceof mongoose.Error.CastError
       ? next(new ErrorBadRequest('Некорректный Id'))
       : next(err)));
 };
